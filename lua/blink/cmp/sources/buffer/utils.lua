@@ -14,10 +14,19 @@ end
 --- @param bufnr integer
 --- @return integer
 function utils.get_buffer_size(bufnr)
-  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-  local size = 0
-  for _, line in ipairs(lines) do
-    size = size + #line + 1
+  local function is_file(path)
+    path = path and path or ''
+    local fs_stat = (vim.uv or vim.loop).fs_stat(path)
+    return fs_stat and fs_stat.type == 'file'
+  end
+  local file_name = vim.api.nvim_buf_get_name(bufnr)
+  local size
+  if not vim.bo[bufnr].modified and is_file(file_name) then
+    size = vim.fn.getfsize(file_name)
+  else
+    size = vim.api.nvim_buf_get_offset(bufnr, vim.api.nvim_buf_line_count(bufnr) - 1)
+    -- Add size of the last line
+    size = size + #vim.api.nvim_buf_get_lines(bufnr, -2, -1, false)[1]
   end
   return size
 end
