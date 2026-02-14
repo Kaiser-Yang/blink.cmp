@@ -22,7 +22,7 @@ function utils.get_buffer_size(bufnr)
   else
     size = vim.api.nvim_buf_get_offset(bufnr, vim.api.nvim_buf_line_count(bufnr) - 1)
     -- Add size of the last line
-    size = size + #(vim.api.nvim_buf_get_lines(bufnr, -2, -1, false)[1] or "")
+    size = size + #(vim.api.nvim_buf_get_lines(bufnr, -2, -1, false)[1] or '')
   end
   return size
 end
