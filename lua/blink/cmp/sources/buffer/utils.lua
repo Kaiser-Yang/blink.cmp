@@ -18,12 +18,12 @@ function utils.get_buffer_size(bufnr)
   local size
   if not vim.bo[bufnr].modified then
     size = vim.fn.getfsize(file_name)
-    if size < 0 then size = 0 end
-  else
-    size = vim.api.nvim_buf_get_offset(bufnr, vim.api.nvim_buf_line_count(bufnr) - 1)
-    -- Add size of the last line
-    size = size + #(vim.api.nvim_buf_get_lines(bufnr, -2, -1, false)[1] or '')
+    if size >= 0 then return size end
   end
+  local last = vim.api.nvim_buf_line_count(bufnr) - 1 -- 0-indexed
+  size = vim.api.nvim_buf_get_offset(bufnr, last)
+  -- Add size of the last line
+  size = size + #(vim.api.nvim_buf_get_lines(bufnr, last, last + 1, false)[1] or '')
   return size
 end
 
