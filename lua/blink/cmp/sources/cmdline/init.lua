@@ -153,7 +153,7 @@ function cmdline:get_completions(context, callback)
             end
             completions = vim.tbl_keys(buffers)
             if #completions < unique_suffixes_limit then
-              unique_suffixes = path_lib:compute_unique_suffixes(vim.tbl_values(buffers))
+              unique_suffixes = path_lib.compute_unique_suffixes(vim.tbl_values(buffers))
             end
           end
         -- Current file
@@ -193,7 +193,7 @@ function cmdline:get_completions(context, callback)
       -- and add it to the newText
 
       if is_buffer_completion and #completions < unique_suffixes_limit then
-        unique_suffixes = path_lib:compute_unique_suffixes(completions)
+        unique_suffixes = path_lib.compute_unique_suffixes(completions)
       end
 
       ---@type blink.cmp.CompletionItem[]
