@@ -10,6 +10,7 @@
 --- @field get_cwd fun(context: blink.cmp.Context): string
 --- @field show_hidden_files_by_default boolean
 --- @field ignore_root_slash boolean
+--- @field enable_bare_relative_paths boolean Complete paths such as src/file without an explicit ./ prefix
 --- @field max_entries integer Maximum number of files/directories to return. This limits memory use and responsiveness for very large folders. Defaults to 10000
 
 --- @class blink.cmp.PathSource : blink.cmp.Source
@@ -26,6 +27,7 @@ function path.new(opts)
     get_cwd = function(context) return vim.fn.expand(('#%d:p:h'):format(context.bufnr)) end,
     show_hidden_files_by_default = false,
     ignore_root_slash = false,
+    enable_bare_relative_paths = false,
     max_entries = 10000,
   })
   -- require('blink.cmp.config.utils').validate('sources.providers.path', {

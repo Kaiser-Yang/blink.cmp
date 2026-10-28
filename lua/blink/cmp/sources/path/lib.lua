@@ -6,6 +6,16 @@ local path_lib = {}
 --- @param opts blink.cmp.PathOpts
 --- @param context blink.cmp.Context
 function path_lib.dirname(opts, context)
+  if opts.enable_bare_relative_paths then
+    local before_cursor = context.line:sub(1, context.pos.col)
+    local relative_path = before_cursor:match([=[[^%s"'`<>|:*?(){}%[%]\=,;!]+$]=])
+    local relative_dir = relative_path and relative_path:match('^(.*)/')
+    if relative_path and relative_dir and not relative_path:match('^[/~$]') and not relative_path:match('^%.%.?/') then
+      local cwd = context.mode == 'cmdline' and vim.fn.getcwd() or opts.get_cwd(context)
+      return vim.fn.resolve(cwd .. '/' .. relative_dir)
+    end
+  end
+
   -- HACK: move this :sub logic into the context?
   -- it's not obvious that you need to avoid going back a char if the start_col == end_col
   local line_before_cursor = context.line:sub(1, context.bounds.start_col - (context.bounds.length == 0 and 1 or 0))
