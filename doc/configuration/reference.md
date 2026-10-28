@@ -558,6 +558,8 @@ sources.providers = {
       ignore_root_slash = false,
       -- Complete paths such as `src/file` without an explicit `./` prefix.
       -- Disabled by default to avoid matching non-path text such as `foo/bar` in code.
+      -- May also be a function(context) returning a boolean, e.g.:
+      -- enable_bare_relative_paths = function(context) return context.mode == 'cmdline' end,
       enable_bare_relative_paths = false,
       -- Maximum number of files/directories to return. This limits memory use and responsiveness for very large folders.
       max_entries = 10000,

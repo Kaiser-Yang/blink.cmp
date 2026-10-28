@@ -41,6 +41,27 @@ for _, line in ipairs({ 'local file = "a/b/c', "path='a/b/c", 'open(a/b/c', 'a/b
 end
 assert(lib.dirname(enabled, context('edit a/b/c', nil, 'cmdline')) == root .. '/command/a/b')
 
+local contexts = {}
+local allow_bare_paths = false
+local dynamic = source.new({
+  get_cwd = disabled.get_cwd,
+  enable_bare_relative_paths = function(ctx)
+    contexts[#contexts + 1] = ctx
+    return allow_bare_paths or ctx.mode == 'cmdline'
+  end,
+}).opts
+local insert_context = context('a/b/c')
+local cmdline_context = context('edit a/b/c', nil, 'cmdline')
+assert(lib.dirname(dynamic, insert_context) == nil, 'A false callback must not enable bare relative paths')
+assert(lib.dirname(dynamic, cmdline_context) == root .. '/command/a/b', 'Callback must receive the request context')
+allow_bare_paths = true
+assert(lib.dirname(dynamic, insert_context) == root .. '/buffer/a/b', 'Callback must be evaluated per request')
+allow_bare_paths = false
+assert(lib.dirname(dynamic, insert_context) == nil, 'Callback must support disabling bare relative paths again')
+assert(contexts[1] == insert_context and contexts[2] == cmdline_context and contexts[3] == insert_context)
+assert(lib.dirname(dynamic, context('./src/file')) == lib.dirname(disabled, context('./src/file')))
+assert(type(dynamic.enable_bare_relative_paths) == 'function', 'The option must retain its callable value')
+
 vim.env.BLINK_PATH_TEST_ROOT = root .. '/buffer'
 for _, line in ipairs({
   './src/file',
@@ -74,4 +95,4 @@ local text = ctx.line:sub(1, item.textEdit.range.start.character)
   .. ctx.line:sub(item.textEdit.range['end'].character + 1)
 assert(text == '"a/b/completed/rest"', 'Completion must preserve the parent path and suffix')
 
-print('PASS opt-in bare paths, nested/quoted/Unicode paths, command cwd, existing prefixes, exclusions and text edits')
+print('PASS boolean and dynamic options, bare/quoted/Unicode paths, command cwd, existing prefixes and text edits')

@@ -10,7 +10,7 @@
 --- @field get_cwd fun(context: blink.cmp.Context): string
 --- @field show_hidden_files_by_default boolean
 --- @field ignore_root_slash boolean
---- @field enable_bare_relative_paths boolean Complete paths such as src/file without an explicit ./ prefix
+--- @field enable_bare_relative_paths boolean | fun(context: blink.cmp.Context): boolean Complete paths such as src/file without an explicit ./ prefix
 --- @field max_entries integer Maximum number of files/directories to return. This limits memory use and responsiveness for very large folders. Defaults to 10000
 
 --- @class blink.cmp.PathSource : blink.cmp.Source

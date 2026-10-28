@@ -6,7 +6,11 @@ local path_lib = {}
 --- @param opts blink.cmp.PathOpts
 --- @param context blink.cmp.Context
 function path_lib.dirname(opts, context)
-  if opts.enable_bare_relative_paths then
+  local enable_bare_relative_paths = opts.enable_bare_relative_paths
+  if type(enable_bare_relative_paths) == 'function' then
+    enable_bare_relative_paths = enable_bare_relative_paths(context)
+  end
+  if enable_bare_relative_paths then
     local before_cursor = context.line:sub(1, context.pos.col)
     local relative_path = before_cursor:match([=[[^%s"'`<>|:*?(){}%[%]\=,;!]+$]=])
     local relative_dir = relative_path and relative_path:match('^(.*)/')
